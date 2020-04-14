@@ -1,5 +1,5 @@
 # open-source-docs
 
-This repository contains documentation for PlanetScale open source projects.
+This repository contains documentation for PlanetScale open source projects. For licensing and contribution guidelines, see the directories for the individual projects.
 
-The documentation for Vitess is [here](https://github.com/vitessio/vitess).
+The documentation for the main Vitess open source project is [here](https://github.com/vitessio/vitess).
