@@ -25,7 +25,3 @@ The operator implements applied changes in the configuration file for your Vites
 ## The Vitess operator is open source.
 
 The Vitess operator is on [GitHub](https://github.com/planetscale/vitess-operator). See the repository for information on licensing and contribution.
-
-<!--## See also-->
-
-<!-- At some point, we will need to add links to the deployment how-to and the API reference here. -->
