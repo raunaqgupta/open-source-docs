@@ -1,2 +1,5 @@
-# vitess-operator-docs
-Documentation for the open source Vitess operator
+# open-source-docs
+
+This repository contains documentation for PlanetScale open source projects. For licensing and contribution guidelines, see the directories for the individual projects.
+
+The Vitess documentation is here: https://github.com/vitessio/vitess.
