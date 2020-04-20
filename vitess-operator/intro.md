@@ -1,12 +1,12 @@
 # Vitess Operator overview
 
-This document describes the purpose of the Vitess operator for Kubernetes and introduces its usage. To learn more about Vitess, see the [Vitess documentation](https://vitess.io/docs). 
+This document describes the purpose of the Vitess Operator for Kubernetes and introduces its usage. To learn more about Vitess, see the [Vitess documentation](https://vitess.io/docs). 
 
 ## The Vitess operator automates the management of Vitess on Kubernetes.
 
-[Running Vitess on Kubernetes](https://vitess.io/docs/get-started/kubernetes/) using a Helm chart provides automated deployment. However, this pattern still requires significant maintenance tasks, like planned failover, updates, and resharding. The purpose of the Vitess operator is to automate much of that maintenance work.
+[Running Vitess on Kubernetes](https://vitess.io/docs/get-started/kubernetes/) using a Helm chart provides automated deployment. However, this pattern still requires significant maintenance tasks, like planned failover, updates, and resharding. The purpose of the Vitess Operator is to automate much of that maintenance work.
 
-The Vitess operator automates tasks like these:
+The Vitess Operator automates tasks like these:
 
 + Deploy any number of Vitess clusters, cells, keyspaces, shards, and tablets to scale both reads and writes either horizontally or vertically;
 + Deploy overlapping shards for Vitess resharding, allowing zero-downtime resizing of shards;
@@ -22,6 +22,6 @@ The configuration for your Vitess cluster is recorded in a single configuration 
 
 The operator implements applied changes in the configuration file for your Vitess cluster.
 
-## The Vitess operator is open source.
+## The Vitess Operator is open source.
 
-The Vitess operator is on [GitHub](https://github.com/planetscale/vitess-operator). See the repository for information on licensing and contribution.
+The Vitess Operator is on [GitHub](https://github.com/planetscale/vitess-operator). See the repository for information on licensing and contribution.

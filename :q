@@ -1,0 +1,69 @@
+[33mcommit b9ec4b7397f906bdb9f78b1383d66a387d161e04[m[33m ([m[1;36mHEAD -> [m[1;32msubdirectory3[m[33m, [m[1;31morigin/subdirectory3[m[33m, [m[1;32mquickstart[m[33m)[m
+Author: Byron Landry <byronlandry@planetscale.com>
+Date:   Thu Apr 16 16:46:39 2020 -0500
+
+    Update wording in overview to clarify.
+
+[33mcommit 65a0159a77a0bfc12b6d9eec9e3c6794abba0340[m
+Merge: e92c404 31a8da6
+Author: Byron Landry <byronlandry@planetscale.com>
+Date:   Thu Apr 16 13:42:58 2020 -0500
+
+    Merge branch 'readme' of https://github.com/planetscale/open-source-docs into subdirectory3
+
+[33mcommit e92c40470d530963bfe2a1fa19dcf58dc292f172[m
+Author: Byron Landry <byronlandry@planetscale.com>
+Date:   Thu Apr 16 13:35:45 2020 -0500
+
+    Remove comments from intro doc.
+
+[33mcommit 05262d0d26e226b8a62920de20284fb1ca09c0f1[m
+Author: Byron Landry <byronlandry@planetscale.com>
+Date:   Thu Apr 16 13:32:57 2020 -0500
+
+    Create overview document for the open source Vitess operator.
+
+[33mcommit a1c1a1baaffd91cbf68f8b1ab3b6c3e71da9a963[m
+Author: Byron Landry <byronlandry@planetscale.com>
+Date:   Wed Apr 15 12:54:05 2020 -0500
+
+    Create new directory for Vitess open source operator.
+
+[33mcommit a4b215f4c188eedb24db2244c6143c10330b0d0c[m[33m ([m[1;31morigin/prod[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mprod[m[33m)[m
+Merge: 5879a44 4cf8e8d
+Author: Byron Landry <byronlandry@planetscale.com>
+Date:   Tue Apr 14 11:58:32 2020 -0500
+
+    Merge pull request #1 from planetscale/add-license-1
+    
+    Add Apache 2.0 license file to Vitess open source operator repo.
+
+[33mcommit 31a8da66150d4e2718a070fa3f1d78d882d96784[m[33m ([m[1;31morigin/readme[m[33m)[m
+Author: Byron Landry <byronlandry@planetscale.com>
+Date:   Tue Apr 14 11:45:51 2020 -0500
+
+    Remove Markdown links for legibility.
+
+[33mcommit 945c4b57806a3932b58df9e8b1e7fb7e5a154232[m
+Author: Byron Landry <byronlandry@planetscale.com>
+Date:   Tue Apr 14 11:38:53 2020 -0500
+
+    Add language about licensing and contribution.
+
+[33mcommit 31039b78cccd69ae3467ddc7b3a13140477455c4[m
+Author: Byron Landry <byronlandry@planetscale.com>
+Date:   Tue Apr 14 11:32:19 2020 -0500
+
+    Update README.md
+
+[33mcommit 4cf8e8d41b247e4be5151e6c20a9c98a1d6d8ec0[m
+Author: Byron Landry <byronlandry@planetscale.com>
+Date:   Mon Apr 13 13:53:36 2020 -0500
+
+    Add Apache 2.0 license file to repo.
+
+[33mcommit 5879a44c81b3f278eaaabdeb4d7c3727fe5322d0[m
+Author: Byron Landry <byronlandry@planetscale.com>
+Date:   Mon Apr 13 13:44:24 2020 -0500
+
+    Initial commit
