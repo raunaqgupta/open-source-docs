@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This document shows how to use the Vitess Operator to deploy a Vitess cluster on Google Cloud Platform.
+This document shows how to use the Vitess Operator to deploy a Vitess cluster on Google Cloud Platform (GCP).
 
 ## Prerequisites
 
@@ -10,46 +10,40 @@ This guide assumes you have the following components and services in place: <!--
 
 + A [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/docs) (GKE) cluster;
 + A local `kubectl` client [configured to access your GKE cluster](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl);
-
-<!--
-+
-+ A GCS storage bucket (https://cloud.google.com/storage/docs/creating-buckets);
-+ A GCP service account (https://cloud.google.com/storage/docs/projects#service-accounts) with access to the GCS storage bucket;
-+ A Kubernetes secret matching your service account (https://cloud.google.com/kubernetes-engine/docs/tutorials/authenticating-to-cloud-platform#step_3_create_service_account_credentials);
-
-These prerequisites still necessite a step where the user updates the exampledb.yaml file to reflect the name of the K8s secret. Is this the best way to document this?-->
++ A [Google Cloud Storage (GCS) storage bucket](https://cloud.google.com/storage/docs/creating-buckets);
++ A [GCP service account](https://cloud.google.com/storage/docs/projects#service-accounts) with access to the GCS storage bucket;
++ A [Kubernetes secret matching your service account](https://cloud.google.com/kubernetes-engine/docs/tutorials/authenticating-to-cloud-platform#step_3_create_service_account_credentials);
 + A local [installation of `vtctlclient`](https://vitess.io/docs/get-started/kubernetes/#prerequisites).
-
-<!-- Should we do a version of this quickstart that omits operator backups? This would simplify it a lot. -->
 
 ## Overview
 
 To deploy a Vitess cluster on GCP using the Vitess Operator, follow these steps:
 
-1. Install the operator and example database configuration files. <!-- Reword? -->
+1. Install the operator and example database configuration files.
 1. Apply the operator configuration file against your Kubernetes cluster.
+1. Edit the name of the Kubernetes secret in the database configuration file.
 1. Apply the database configuration file to your cluster.
 1. Port-forward the `vtctld` service to your Kubernetes cluster.
+1. Apply the VSchema to your Vitess database.
 1. Apply the SQL schema to your Vitess database.
 1. Expose the Vitess service.
 1. Connect to your Vitess database using a MySQL client.
 
-## Step 1. Install the operator.
+## Step 1. Install the operator and example database configuration files.
 
-Download the operator configuration file here:
+Download the following files:
 
-[https://storage.googleapis.com/vitess-operator/install/operator.yaml]
-
-Download the database configuration file here:
-
-[https://storage.googleapis.com/vitess-operator/examples/exampledb.yaml]
++ [Operator configuration file](https://storage.googleapis.com/vitess-operator/install/operator.yaml)
++ [Database configuration file](https://storage.googleapis.com/vitess-operator/examples/exampledb.yaml)
++ [Example VSchema](https://storage.googleapis.com/vitess-operator/examples/vschema.json)
++ [Example SQL schema](https://storage.googleapis.com/vitess-operator/examples/schema.sql)                                              This guide will assume that the above files are in your working directory.
 
 ## Step 2. Apply the operator configuration file against your Kubernetes cluster.
 
 Enter the following command:
 
 ```sh
-> kubectl apply -f operator.yaml
+$ kubectl apply -f operator.yaml
 ```
 
 You should see the following output:
@@ -74,17 +68,37 @@ deployment.apps/vitess-operator created
 You can verify the status of the operator pods using the following command:
 
 ```sh
-> kubectl get pods
+$ kubectl get pods
 ```
 
-## Step 3. Apply the database configuration file to your cluster.
+## Step 3. Edit the name of the Kubernetes secret in the database configuration file.
+
+The exampledb.yaml file contains the name of the Kubernetes secret for your database:
+
+```yaml
+# Version: 20200113
+apiVersion: planetscale.com/v2
+kind: VitessCluster
+metadata:
+  name: example
+spec:
+  backup:
+    locations:
+    - gcs:
+        bucket: mybucketname1
+        authSecret:
+          name: gcs-secret
+          key: gcs_key.json
+```
+
+Edit the values of 'spec.backup.locations.gcs.authSecret.name' and 'spec.backup.locations.gcs.authSecret.key' to reflect the values for the Kubernetes secret for your GCP service account with access to a GCS bucket.
+
+## Step 4. Apply the database configuration file to your cluster.
 
 Apply the example database configuration to your Kubernetes cluster using the following command:
 
-<!-- Where is the file? Why not just apply directly from URL? Removes two steps out of eight. -->
-
 ```sh
-> kubectl apply -f exampledb.yaml
+$ kubectl apply -f exampledb.yaml
 ```
 
 You should see the following output:
@@ -94,10 +108,10 @@ vitesscluster.planetscale.com/example created
 secret/example-cluster-config created
 ```
 
-After a few minutes, you should see the pods for your keyspace being created using this command:
+After a few minutes, you should see the pods for your keyspace using the following command:
 
 ```sh
-> kubectl get pods
+$ kubectl get pods
 ```
 
 You should see output like this:
@@ -120,7 +134,7 @@ example-vttablet-uscentral1a-3876690474-0ed30664 2/3 Running 2 59s
 vitess-operator-6f54958746-mr9hp 1/1 Running 0 17m
 ```
 
-## Step 4. Port-forward the `vtctld` service to your Kubernetes cluster.
+## Step 5. Port-forward the `vtctld` service to your Kubernetes cluster.
 
 Use the following command:
 
@@ -129,10 +143,8 @@ kubectl port-forward --address localhost deployment/$(kubectl get deployment --s
 ```
 You should now be able to see all of your tablets using the following command:
 
-<!-- This step requires vtctlclient to be installed also. Add to prereqs? -->
-
 ```sh
-> vtctlclient -server localhost:15999 ListAllTablets
+$ vtctlclient -server localhost:15999 ListAllTablets
 ```
 
 You should see output like this:
@@ -146,83 +158,55 @@ uscentral1a-3815197730 main 80- master 10.16.2.20:15000 10.16.2.20:3306 []
 uscentral1a-3876690474 main -80 master 10.16.2.21:15000 10.16.2.21:3306 []
 ```
 
-## Step 5. Apply the VSchema to your Vitess database.
+## Step 6. Apply the VSchema to your Vitess database.
 
-Download the example VSchema here:
-
-[https://storage.googleapis.com/vitess-operator/examples/vschema.json]
-
-Apply the VSchema using the following command:
+Apply the example VSchema using the following command:
 
 ```sh
-vtctlclient -server localhost:15999 ApplyVSchema -vschema "$(cat ./vschema.json)" main
+$ vtctlclient -server localhost:15999 ApplyVSchema -vschema "$(cat ./vschema.json)" main
 ```
 
-## Step 5. Apply the SQL schema to your Vitess database.
+## Step 7. Apply the SQL schema to your Vitess database.
 
-Apply the SQL schema using the following command:
-
-
-<!-- Is this the right format to be using for shell commands? Also, this requires that the schema be located in the working directory. -->
+Apply the example SQL schema using the following command:
 
 ```sh
-> vtctlclient -server localhost:15999 ApplySchema -sql "$(cat ./schema.sql)" main
+$ vtctlclient -server localhost:15999 ApplySchema -sql "$(cat ./schema.sql)" main
 ```
 
-## Step 6. Expose the Vitess service.
+## Step 8. Expose the Vitess service.
 
 Expose the service using the following command:
 
 <!-- Breaking up this command into two parts. Try getting Jacque's embedded syntax to work.-->
 
-The following command outputs the deployment name:
+The following command exposes the service.
 
 ```sh
-> kubectl get deployment --selector="planetscale.com/component=vtgate" -o=jsonpath="{.items..metadata.name}"
+$ kubectl expose deployment $( kubectl get deployment --selector="planetscale.com/component=vtgate" -o=jsonpath="{.items..metadata.name}" ) --type=LoadBalancer --name=test-vtgate --port 3306 --target-port 3306
 ```
 
-The following command exposes the service using the deployment name from above.
+Use the following command to find the external IP for your LoadBalancer service:
 
 ```sh
-kubectl expose deployment [deployment_name] --type=LoadBalancer --name=test-vtgate --port 3306 --target-port 3306
-```
-
-You should see the following output:
-
-```
-service/test-vtgate exposed
-```
-
-## Step 7. Determine the external IP for the Load Balancer service
-
-Use the following command to get the IP for your LoadBalancer service:
-
-```sh
-kubectl get service test-vtgate
+$ kubectl get service test-vtgate
 ```
 
 You should see output like the following:
 
-
 ```sh
 NAME TYPE CLUSTER-IP EXTERNAL-IP PORT(S) AGE
-test-vtgate LoadBalancer 10.35.244.55 35.238.202.46 3306:32157/TCP 90s
+test-vtgate LoadBalancer [`cluster_ip`] [`external_ip`] 3306:32157/TCP 90s
 ```
 
-## Step 7. Connect to your Vitess database using a MySQL client.                     
+## Step 9. Connect to your Vitess database using a MySQL client.                     
 
 Use the IP from the previous step to connect to your Vitess database using a command like the following:
 
 <!-- Is this the right format for CLI variables? -->
 
 ```sh
-mysql -u user -h [external_ip]
-```
-
-For example, to connect to the example IP address from the previous step, use the following command:
-
-```sh
-> mysql -u user -h 35.238.202.46 main -p -A
+$ mysql -u user -h `external_ip`
 ```
 
 You can now submit queries against your Vitess database from your MySQL client.
