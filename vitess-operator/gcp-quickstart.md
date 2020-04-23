@@ -36,7 +36,9 @@ Download the following files:
 + [Operator configuration file](https://storage.googleapis.com/vitess-operator/install/operator.yaml)
 + [Database configuration file](https://storage.googleapis.com/vitess-operator/examples/exampledb.yaml)
 + [Example VSchema](https://storage.googleapis.com/vitess-operator/examples/vschema.json)
-+ [Example SQL schema](https://storage.googleapis.com/vitess-operator/examples/schema.sql)                                              This guide will assume that the above files are in your working directory.
++ [Example SQL schema](https://storage.googleapis.com/vitess-operator/examples/schema.sql)
+
+This guide will assume that the above files are in your working directory.
 
 ## Step 2. Apply the operator configuration file against your Kubernetes cluster.
 
@@ -160,7 +162,7 @@ uscentral1a-3876690474 main -80 master 10.16.2.21:15000 10.16.2.21:3306 []
 
 ## Step 6. Apply the VSchema to your Vitess database.
 
-Apply the example VSchema using the following command:
+Apply the example [VSchema](https://vitess.io/docs/reference/vschema/) using the following command:
 
 ```sh
 $ vtctlclient -server localhost:15999 ApplyVSchema -vschema "$(cat ./vschema.json)" main
