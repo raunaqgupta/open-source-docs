@@ -8,12 +8,17 @@ This document shows how to use the Vitess Operator to deploy a Vitess cluster on
 
 This guide assumes you have the following components and services in place: <!-- what? -->
 
-+ A GKE Kubernetes cluster; <!-- Link out to docs? -->
-+ A local `kubectl` configured to access your Kubernetes cluster;
-+ A GCP service account;
-+ A GCS storage bucket;
-+ A Kubernetes secret matching your service account;
-+ A local installation of `vtctlclient`.
++ A [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/docs) (GKE) cluster;
++ A local `kubectl` client [configured to access your GKE cluster](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl);
+
+<!--
++
++ A GCS storage bucket (https://cloud.google.com/storage/docs/creating-buckets);
++ A GCP service account (https://cloud.google.com/storage/docs/projects#service-accounts) with access to the GCS storage bucket;
++ A Kubernetes secret matching your service account (https://cloud.google.com/kubernetes-engine/docs/tutorials/authenticating-to-cloud-platform#step_3_create_service_account_credentials);
+
+These prerequisites still necessite a step where the user updates the exampledb.yaml file to reflect the name of the K8s secret. Is this the best way to document this?-->
++ A local [installation of `vtctlclient`](https://vitess.io/docs/get-started/kubernetes/#prerequisites).
 
 <!-- Should we do a version of this quickstart that omits operator backups? This would simplify it a lot. -->
 
@@ -21,8 +26,8 @@ This guide assumes you have the following components and services in place: <!--
 
 To deploy a Vitess cluster on GCP using the Vitess Operator, follow these steps:
 
+1. Install the operator and example database configuration files. <!-- Reword? -->
 1. Apply the operator configuration file against your Kubernetes cluster.
-<!-- Do we need a 'customize configuration file' step? If we can avoid it, it would be a better quickstart. -->
 1. Apply the database configuration file to your cluster.
 1. Port-forward the `vtctld` service to your Kubernetes cluster.
 1. Apply the SQL schema to your Vitess database.
@@ -34,6 +39,10 @@ To deploy a Vitess cluster on GCP using the Vitess Operator, follow these steps:
 Download the operator configuration file here:
 
 [https://storage.googleapis.com/vitess-operator/install/operator.yaml]
+
+Download the database configuration file here:
+
+[https://storage.googleapis.com/vitess-operator/examples/exampledb.yaml]
 
 ## Step 2. Apply the operator configuration file against your Kubernetes cluster.
 
@@ -67,12 +76,6 @@ You can verify the status of the operator pods using the following command:
 ```sh
 > kubectl get pods
 ```
-
-## Step 3. Install the database configuration file.
-
-Download the database configuration file here:
-
-[https://storage.googleapis.com/vitess-operator/examples/exampledb.yaml]
 
 ## Step 3. Apply the database configuration file to your cluster.
 
@@ -121,15 +124,12 @@ vitess-operator-6f54958746-mr9hp 1/1 Running 0 17m
 
 Use the following command:
 
-<!-- Does this command need to be modified by the user? Can we get a universal one, or can we use example values throughout so this just works? -->
-
 ```sh
-kubectl port-forward --address localhost deployment/$(kubectl get deployment
---selector="planetscale.com/component=vtctld" -o=jsonpath="{.items..metadata.name}")
-15999:15999
+kubectl port-forward --address localhost deployment/$(kubectl get deployment --selector="planetscale.com/component=vtctld" -o=jsonpath="{.items..metadata.name}") 15999:15999
 ```
-
 You should now be able to see all of your tablets using the following command:
+
+<!-- This step requires vtctlclient to be installed also. Add to prereqs? -->
 
 ```sh
 > vtctlclient -server localhost:15999 ListAllTablets
@@ -146,18 +146,24 @@ uscentral1a-3815197730 main 80- master 10.16.2.20:15000 10.16.2.20:3306 []
 uscentral1a-3876690474 main -80 master 10.16.2.21:15000 10.16.2.21:3306 []
 ```
 
-## Step 5. Install the example VSchema
+## Step 5. Apply the VSchema to your Vitess database.
 
 Download the example VSchema here:
 
 [https://storage.googleapis.com/vitess-operator/examples/vschema.json]
+
+Apply the VSchema using the following command:
+
+```sh
+vtctlclient -server localhost:15999 ApplyVSchema -vschema "$(cat ./vschema.json)" main
+```
 
 ## Step 5. Apply the SQL schema to your Vitess database.
 
 Apply the SQL schema using the following command:
 
 
-<!-- Is this the right format to be using for shell commands? -->
+<!-- Is this the right format to be using for shell commands? Also, this requires that the schema be located in the working directory. -->
 
 ```sh
 > vtctlclient -server localhost:15999 ApplySchema -sql "$(cat ./schema.sql)" main
@@ -167,9 +173,24 @@ Apply the SQL schema using the following command:
 
 Expose the service using the following command:
 
+<!-- Breaking up this command into two parts. Try getting Jacque's embedded syntax to work.-->
+
+The following command outputs the deployment name:
+
 ```sh
-kubectl expose deployment $(kubectl get deployment
---selector="planetscale.com/component=vtgate" -o=jsonpath="{.items..metadata.name}") --type=LoadBalancer --name=test-vtgate --port 3306 --target-port 3306
+> kubectl get deployment --selector="planetscale.com/component=vtgate" -o=jsonpath="{.items..metadata.name}"
+```
+
+The following command exposes the service using the deployment name from above.
+
+```sh
+kubectl expose deployment [deployment_name] --type=LoadBalancer --name=test-vtgate --port 3306 --target-port 3306
+```
+
+You should see the following output:
+
+```
+service/test-vtgate exposed
 ```
 
 ## Step 7. Determine the external IP for the Load Balancer service
@@ -182,7 +203,6 @@ kubectl get service test-vtgate
 
 You should see output like the following:
 
-<!-- Do we need to use a different IP? -->
 
 ```sh
 NAME TYPE CLUSTER-IP EXTERNAL-IP PORT(S) AGE
@@ -207,24 +227,7 @@ For example, to connect to the example IP address from the previous step, use th
 
 You can now submit queries against your Vitess database from your MySQL client.
 
-For example, the following query lists the tables in your database:
-
-```sql
-> SHOW TABLES;
-```
-
-The above query should return the following output:
-
-```sql
-+-------------------+
-| Tables_in_vt_main |
-+-------------------+
-| users             |
-| users_name_idx    |
-+-------------------+
-```
-
-The following query displays the tables in your database with VSchemas: <!-- What? -->
+For example, the following query displays the tables in your database with VSchemas: <!-- What? -->
 
 ```sql
 > SHOW VSCHEMA TABLES;
@@ -241,26 +244,6 @@ The above query should return the following output:
 | users_name_idx |
 +----------------+
 3 rows in set (0.06 sec)
-```
-
-The following query displays the VSchemas for the columns in the `users` table:
-
-```sql
-SHOW VSCHEMA VINDEXES ON users;
-```
-
-The above query should return the following output:
-
-<!-- This sample may need reformatting. -->
-
-```sql
-+---------+----------------+-------------+-----------------------------------+-------+
-| Columns | Name | Type | Params | Owner |
-+---------+----------------+-------------+-----------------------------------+-------+
-| user_id | hash | hash | | |
-| name | users_name_idx | lookup_hash | from=name; table=users_name_idx; | users |
-| | | | to=user_id | |
-+---------+----------------+-------------+-----------------------------------+-------+
 ```
 
 ## Cleanup 
