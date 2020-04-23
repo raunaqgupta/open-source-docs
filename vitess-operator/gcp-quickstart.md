@@ -6,7 +6,7 @@ This document shows how to use the Vitess Operator to deploy a Vitess cluster on
 
 ## Prerequisites
 
-This guide assumes you have the following components and services in place: <!-- what? -->
+This guide assumes you have the following components and services:
 
 + A [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/docs) (GKE) cluster;
 + A local `kubectl` client [configured to access your GKE cluster](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl);
@@ -178,10 +178,6 @@ $ vtctlclient -server localhost:15999 ApplySchema -sql "$(cat ./schema.sql)" mai
 
 Expose the service using the following command:
 
-<!-- Breaking up this command into two parts. Try getting Jacque's embedded syntax to work.-->
-
-The following command exposes the service.
-
 ```sh
 $ kubectl expose deployment $( kubectl get deployment --selector="planetscale.com/component=vtgate" -o=jsonpath="{.items..metadata.name}" ) --type=LoadBalancer --name=test-vtgate --port 3306 --target-port 3306
 ```
@@ -203,15 +199,13 @@ test-vtgate LoadBalancer [`cluster_ip`] [`external_ip`] 3306:32157/TCP 90s
 
 Use the IP from the previous step to connect to your Vitess database using a command like the following:
 
-<!-- Is this the right format for CLI variables? -->
-
 ```sh
 $ mysql -u user -h `external_ip`
 ```
 
 You can now submit queries against your Vitess database from your MySQL client.
 
-For example, the following query displays the tables in your database with VSchemas: <!-- What? -->
+For example, the following query displays the tables in your database with VSchemas:
 
 ```sql
 > SHOW VSCHEMA TABLES;
