@@ -52,7 +52,6 @@ You should see the following output:
 
 ```sh
 customresourcedefinition.apiextensions.k8s.io/etcdlockservers.planetscale.com created
-1
 customresourcedefinition.apiextensions.k8s.io/vitessbackups.planetscale.com created
 customresourcedefinition.apiextensions.k8s.io/vitessbackupstorages.planetscale.com created
 customresourcedefinition.apiextensions.k8s.io/vitesscells.planetscale.com created
