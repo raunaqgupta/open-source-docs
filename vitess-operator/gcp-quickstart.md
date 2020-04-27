@@ -224,11 +224,3 @@ The above query should return the following output:
 +----------------+
 3 rows in set (0.06 sec)
 ```
-
-## Cleanup 
-
-To clean up this quickstart, follow these steps:
-
-1. Delete the service. <!-- What service? How? -->
-1. Delete the database configuration file.
-1. Delete the operator configuration file.
