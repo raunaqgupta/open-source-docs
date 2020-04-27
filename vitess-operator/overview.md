@@ -3,7 +3,7 @@ title: 'Overview'
 category: 'vitess-operator'
 ---
 
-# Vitess Operator overview
+# Overview: Vitess Operator
 
 This document describes the purpose of the Vitess Operator for Kubernetes and introduces its usage. To learn more about Vitess, see the [Vitess documentation](https://vitess.io/docs). 
 
