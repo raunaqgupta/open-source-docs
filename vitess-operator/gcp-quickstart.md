@@ -19,7 +19,7 @@ This guide assumes you have the following components and services:
 
 To deploy a Vitess cluster on GCP using the Vitess Operator, follow these steps:
 
-1. Install the operator and example database configuration files.
+1. Download the operator and example database configuration files.
 1. Apply the operator configuration file against your Kubernetes cluster.
 1. Edit the name of the Kubernetes secret in the database configuration file.
 1. Apply the database configuration file to your cluster.
@@ -29,7 +29,7 @@ To deploy a Vitess cluster on GCP using the Vitess Operator, follow these steps:
 1. Expose the Vitess service.
 1. Connect to your Vitess database using a MySQL client.
 
-## Step 1. Install the operator and example database configuration files.
+## Step 1. Download the operator and example database configuration files.
 
 Download the following files:
 
