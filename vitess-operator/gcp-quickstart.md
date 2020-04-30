@@ -44,13 +44,13 @@ This guide will assume that the above files are in your working directory.
 
 Enter the following command:
 
-```sh
+```console
 $ kubectl apply -f operator.yaml
 ```
 
 You should see the following output:
 
-```sh
+```console
 customresourcedefinition.apiextensions.k8s.io/etcdlockservers.planetscale.com created
 customresourcedefinition.apiextensions.k8s.io/vitessbackups.planetscale.com created
 customresourcedefinition.apiextensions.k8s.io/vitessbackupstorages.planetscale.com created
@@ -68,7 +68,7 @@ deployment.apps/vitess-operator created
 
 You can verify the status of the operator pods using the following command:
 
-```sh
+```console
 $ kubectl get pods
 ```
 
@@ -98,26 +98,26 @@ Edit the values of 'spec.backup.locations.gcs.authSecret.name' and 'spec.backup.
 
 Apply the example database configuration to your Kubernetes cluster using the following command:
 
-```sh
+```console
 $ kubectl apply -f exampledb.yaml
 ```
 
 You should see the following output:
 
-```sh
+```console
 vitesscluster.planetscale.com/example created
 secret/example-cluster-config created
 ```
 
 After a few minutes, you should see the pods for your keyspace using the following command:
 
-```sh
+```console
 $ kubectl get pods
 ```
 
 You should see output like this:
 
-```sh
+```console
 NAME READY STATUS RESTARTS AGE
 example-90089e05-vitessbackupstorage-subcontroller 1/1 Running 0 59s
 example-etcd-faf13de3-1 1/1 Running 0 59s
@@ -139,18 +139,18 @@ vitess-operator-6f54958746-mr9hp 1/1 Running 0 17m
 
 Use the following command:
 
-```sh
+```console
 kubectl port-forward --address localhost deployment/$(kubectl get deployment --selector="planetscale.com/component=vtctld" -o=jsonpath="{.items..metadata.name}") 15999:15999
 ```
 You should now be able to see all of your tablets using the following command:
 
-```sh
+```console
 $ vtctlclient -server localhost:15999 ListAllTablets
 ```
 
 You should see output like this:
 
-```sh
+```console
 uscentral1a-0261268656 main -80 replica 10.16.1.16:15000 10.16.1.16:3306 []
 uscentral1a-1579720563 main 80- replica 10.16.1.15:15000 10.16.1.15:3306 []
 uscentral1a-2253629440 main -80 replica 10.16.0.18:15000 10.16.0.18:3306 []
@@ -163,7 +163,7 @@ uscentral1a-3876690474 main -80 master 10.16.2.21:15000 10.16.2.21:3306 []
 
 Apply the example [VSchema](https://vitess.io/docs/reference/vschema/) using the following command:
 
-```sh
+```console
 $ vtctlclient -server localhost:15999 ApplyVSchema -vschema "$(cat ./vschema.json)" main
 ```
 
@@ -171,7 +171,7 @@ $ vtctlclient -server localhost:15999 ApplyVSchema -vschema "$(cat ./vschema.jso
 
 Apply the example SQL schema using the following command:
 
-```sh
+```console
 $ vtctlclient -server localhost:15999 ApplySchema -sql "$(cat ./schema.sql)" main
 ```
 
@@ -179,19 +179,19 @@ $ vtctlclient -server localhost:15999 ApplySchema -sql "$(cat ./schema.sql)" mai
 
 Expose the service using the following command:
 
-```sh
+```console
 $ kubectl expose deployment $( kubectl get deployment --selector="planetscale.com/component=vtgate" -o=jsonpath="{.items..metadata.name}" ) --type=LoadBalancer --name=test-vtgate --port 3306 --target-port 3306
 ```
 
 Use the following command to find the external IP for your LoadBalancer service:
 
-```sh
+```console
 $ kubectl get service test-vtgate
 ```
 
 You should see output like the following:
 
-```sh
+```console
 NAME TYPE CLUSTER-IP EXTERNAL-IP PORT(S) AGE
 test-vtgate LoadBalancer [`cluster_ip`] [`external_ip`] 3306:32157/TCP 90s
 ```
@@ -200,7 +200,7 @@ test-vtgate LoadBalancer [`cluster_ip`] [`external_ip`] 3306:32157/TCP 90s
 
 Use the IP from the previous step to connect to your Vitess database using a command like the following:
 
-```sh
+```console
 $ mysql -u user -h `external_ip`
 ```
 
