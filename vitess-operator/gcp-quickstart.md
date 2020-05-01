@@ -192,8 +192,8 @@ $ kubectl get service test-vtgate
 You should see output like the following:
 
 ```console
-NAME TYPE CLUSTER-IP EXTERNAL-IP PORT(S) AGE
-test-vtgate LoadBalancer [`cluster_ip`] [`external_ip`] 3306:32157/TCP 90s
+NAME         TYPE          CLUSTER-IP      EXTERNAL-IP      PORT(S)         AGE
+test-vtgate  LoadBalancer  [`cluster_ip`]  [`external_ip`]  3306:32157/TCP  90s
 ```
 
 ## Step 9. Connect to your Vitess database using a MySQL client.                     
