@@ -9,7 +9,7 @@ This document shows how to use the Vitess Operator to deploy a Vitess cluster on
 This guide assumes you have the following components and services:
 
 + A [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/docs) (GKE) cluster;
-+ A local `kubectl` client [configured to access your GKE cluster](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl);
++ A local `kubectl` client [configured to access the GKE cluster](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl) where you wish to install the operator;
 + A [Google Cloud Storage (GCS) storage bucket](https://cloud.google.com/storage/docs/creating-buckets);
 + A [GCP service account](https://cloud.google.com/storage/docs/projects#service-accounts) with access to the GCS storage bucket;
 + A [Kubernetes secret matching your service account](https://cloud.google.com/kubernetes-engine/docs/tutorials/authenticating-to-cloud-platform#step_3_create_service_account_credentials);
