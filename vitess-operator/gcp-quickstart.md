@@ -42,6 +42,8 @@ This guide will assume that the above files are in your working directory.
 
 ## Step 2. Apply the operator configuration file against your Kubernetes cluster.
 
+This step assumes that `kubectl` is configured to access the GKE cluster.
+
 Enter the following command:
 
 ```console
