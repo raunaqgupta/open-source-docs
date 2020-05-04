@@ -1,3 +1,8 @@
+---
+title: 'Getting started with the Vitess Operator on Google Cloud Platform'
+category: 'vitess-operator'
+---
+
 # Getting started with the Vitess Operator on Google Cloud Platform
 
 ## Introduction
