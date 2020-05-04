@@ -140,21 +140,21 @@ $ kubectl get pods
 You should see output like this:
 
 ```console
-NAME READY STATUS RESTARTS AGE
-example-90089e05-vitessbackupstorage-subcontroller 1/1 Running 0 59s
-example-etcd-faf13de3-1 1/1 Running 0 59s
-example-etcd-faf13de3-2 1/1 Running 0 59s
-example-etcd-faf13de3-3 1/1 Running 0 59s
-example-uscentral1a-vtctld-6a268099-56c48bbc89-6r9dp 1/1 Running 2 58s
-example-uscentral1a-vtgate-bbffae2f-54d5fdd79-gmwlm 0/1 Running 2 54s
-example-uscentral1a-vtgate-bbffae2f-54d5fdd79-jldzg 0/1 Running 2 54s
-example-vttablet-uscentral1a-0261268656-d6078140 2/3 Running 2 58s
-example-vttablet-uscentral1a-1579720563-f892b0e6 2/3 Running 2 59s
-example-vttablet-uscentral1a-2253629440-17557ac0 2/3 Running 2 58s
-example-vttablet-uscentral1a-3067826231-d454720e 2/3 Running 2 59s
-example-vttablet-uscentral1a-3815197730-f3886a80 2/3 Running 2 58s
-example-vttablet-uscentral1a-3876690474-0ed30664 2/3 Running 2 59s
-vitess-operator-6f54958746-mr9hp 1/1 Running 0 17m
+NAME                                                  READY  STATUS   RESTARTS  AGE
+example-90089e05-vitessbackupstorage-subcontroller    1/1    Running  0         59s
+example-etcd-faf13de3-1                               1/1    Running  0         59s
+example-etcd-faf13de3-2                               1/1    Running  0         59s
+example-etcd-faf13de3-3                               1/1    Running  0         59s
+example-uscentral1a-vtctld-6a268099-56c48bbc89-6r9dp  1/1    Running  2         58s
+example-uscentral1a-vtgate-bbffae2f-54d5fdd79-gmwlm   0/1    Running  2         54s
+example-uscentral1a-vtgate-bbffae2f-54d5fdd79-jldzg   0/1    Running  2         54s
+example-vttablet-uscentral1a-0261268656-d6078140      2/3    Running  2         58s
+example-vttablet-uscentral1a-1579720563-f892b0e6      2/3    Running  2         59s
+example-vttablet-uscentral1a-2253629440-17557ac0      2/3    Running  2         58s
+example-vttablet-uscentral1a-3067826231-d454720e      2/3    Running  2         59s
+example-vttablet-uscentral1a-3815197730-f3886a80      2/3    Running  2         58s
+example-vttablet-uscentral1a-3876690474-0ed30664      2/3    Running  2         59s
+vitess-operator-6f54958746-mr9hp                      1/1    Running  0         17m
 ```
 
 ## Step 5. Port-forward the `vtctld` service to your Kubernetes cluster.
