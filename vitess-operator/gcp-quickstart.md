@@ -101,6 +101,8 @@ vitess-operator-6f54958746-mr9hp			 1/1	 Running 0	  17m
 
 ## Step 3. Edit the name of the Kubernetes secret in the database configuration file.
 
+This step is only necessary if you want to backup your database; for a quick test deployment, you can skip this step.
+
 The exampledb.yaml file contains the name of the Kubernetes secret for your database:
 
 ```yaml
