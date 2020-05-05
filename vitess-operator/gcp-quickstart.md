@@ -119,7 +119,7 @@ spec:
           key: gcs_key.json
 ```
 
-Edit the values of 'spec.backup.locations.gcs.authSecret.name' and 'spec.backup.locations.gcs.authSecret.key' to reflect the values for the Kubernetes secret for your GCP service account with access to a GCS bucket.
+Edit the values of 'spec.backup.locations.gcs.bucket', 'spec.backup.locations.gcs.authSecret.name', and 'spec.backup.locations.gcs.authSecret.key' to reflect the values for your storage bucket and the Kubernetes secret for your GCP service account with access to a GCS bucket.
 
 ## Step 4. Apply the database configuration file to your cluster.
 
