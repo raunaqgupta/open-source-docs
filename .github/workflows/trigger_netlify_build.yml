@@ -2,7 +2,7 @@ name: Master Push Netlify Build Trigger
 
 on:
   push:
-    branches: [ master ]
+    branches: [ prod ]
 
 jobs:
   build:
