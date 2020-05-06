@@ -1,0 +1,15 @@
+name: Master Push Netlify Build Trigger
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger build on push to master
+        run: curl -X POST -d {} https://api.netlify.com/build_hooks/${TOKEN}
+        env:
+          TOKEN: ${{secrets.NETLIFY_BUILD_HOOK}}
