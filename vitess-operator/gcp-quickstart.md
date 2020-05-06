@@ -1,5 +1,5 @@
 ---
-title: 'Getting started with the Vitess Operator on Google Cloud Platform'
+title: 'Vitess Operator Quickstart on GCP'
 category: 'vitess-operator'
 ---
 
