@@ -253,3 +253,7 @@ The above query should return the following output:
 +----------------+
 3 rows in set (0.06 sec)
 ```
+
+## Next steps
+
++ See detailed operator configuration options in the [Operator API reference](api).
