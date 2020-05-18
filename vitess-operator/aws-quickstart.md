@@ -1,28 +1,28 @@
 ---
-title: 'Vitess Operator Quickstart on GCP'
+title: 'Vitess Operator Quickstart on AWS'
 category: 'vitess-operator'
 ---
 
-# Getting started with the Vitess Operator on Google Cloud Platform
+# Getting started with the Vitess Operator on AWS
 
 ## Introduction
 
-This document shows how to use the Vitess Operator to deploy a Vitess cluster on Google Cloud Platform (GCP).
+This document shows how to use the Vitess Operator to deploy a Vitess cluster on AWS using EKS (Elastic Kubernetes Service).
 
 ## Prerequisites
 
 This guide assumes you have the following components and services:
 
-+ A [Google Kubernetes Engine](https://cloud.google.com/kubernetes-engine/docs) (GKE) cluster;
-+ A local `kubectl` client [configured to access the GKE cluster](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl) where you wish to install the operator;
-+ A [Google Cloud Storage (GCS) storage bucket](https://cloud.google.com/storage/docs/creating-buckets);
-+ A [GCP service account](https://cloud.google.com/storage/docs/projects#service-accounts) with access to the GCS storage bucket;
-+ A [Kubernetes secret matching your service account](https://cloud.google.com/kubernetes-engine/docs/tutorials/authenticating-to-cloud-platform#step_3_create_service_account_credentials);
++ A [Elastic Kubernetes Service](https://aws.amazon.com/eks/) (EKS) cluster;
++ A local `kubectl` client [configured to access the EKS cluster](https://aws.amazon.com/premiumsupport/knowledge-center/eks-cluster-connection/) where you wish to install the operator;
++ An [S3 storage bucket](https://docs.aws.amazon.com/AmazonS3/latest/user-guide/create-bucket.html);
++ An [AWS IAM role and policy](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) with access to the S3 storage bucket;
++ A Kubernetes secret matching your service account; or alternatively a Kubernetes service account mapped to your S3 IAM role above;
 + A local [installation of `vtctlclient`](https://vitess.io/docs/get-started/kubernetes/#prerequisites).
 
 ## Overview
 
-To deploy a Vitess cluster on GCP using the Vitess Operator, follow these steps:
+To deploy a Vitess cluster on EKS using the Vitess Operator, follow these steps:
 
 1. Download the operator and example database configuration files.
 1. Apply the operator configuration file against your Kubernetes cluster.
@@ -39,7 +39,7 @@ To deploy a Vitess cluster on GCP using the Vitess Operator, follow these steps:
 Download the following files:
 
 + [Operator configuration file](https://storage.googleapis.com/vitess-operator/install/operator.yaml)
-+ [Database configuration file](https://storage.googleapis.com/vitess-operator/examples/exampledb.yaml)
++ [Database configuration file](https://storage.googleapis.com/vitess-operator/examples/exampledb_aws.yaml)
 + [Example VSchema](https://storage.googleapis.com/vitess-operator/examples/vschema.json)
 + [Example SQL schema](https://storage.googleapis.com/vitess-operator/examples/schema.sql)
 
@@ -82,15 +82,15 @@ $ kubectl get pods
 You should see output like the following:
 
 ```console
-NAME							 READY	 STATUS	 RESTARTS AGE
-vitess-operator-6f54958746-mr9hp			 1/1	 Running 0	  17m
+NAME                               READY   STATUS    RESTARTS   AGE
+vitess-operator-5f64b6fb65-pnvjl   1/1     Running   0          35s
 ```
 
 ## Step 3. Edit the name of the Kubernetes secret in the database configuration file.
 
-This step is only necessary if you want to backup your database; for a quick test deployment, you can skip this step. If skipping this step, you need to remove the `spec.backup` section of your `exampledb.yaml` file.
+This step is only necessary if you want to backup your database; for a quick test deployment, you can skip this step. If skipping this step, you need to remove the 'spec.backup' section of your `exampledb_aws.yaml` file.
 
-The `exampledb.yaml` file contains the name of the Kubernetes secret for your database:
+The `exampledb_aws.yaml` file contains the name of the Kubernetes secret for your database:
 
 ```yaml
 # Version: 20200113
@@ -101,21 +101,19 @@ metadata:
 spec:
   backup:
     locations:
-    - gcs:
+    - s3:
         bucket: mybucketname1
-        authSecret:
-          name: gcs-secret
-          key: gcs_key.json
+        region: us-west-2
 ```
 
-Edit the values of 'spec.backup.locations.gcs.bucket', 'spec.backup.locations.gcs.authSecret.name', and 'spec.backup.locations.gcs.authSecret.key' to reflect the values for your storage bucket and the Kubernetes secret for your GCP service account with access to a GCS bucket.
+Edit the values of 'spec.backup.locations.s3.bucket' and 'spec.backup.locations.s3.region' to reflect the name and region for your storage bucket. This assumes that your EKS cluster default Kubernetes service account has permissions to access (list, read & write) the bucket. If not, you may need to add an 'spec.backup.locations.s3.authSecret' section, and make sure you have a matching Kubernetes secret created for your AWS service account with access to that bucket.
 
 ## Step 4. Apply the database configuration file to your cluster.
 
 Apply the example database configuration to your Kubernetes cluster using the following command:
 
 ```console
-$ kubectl apply -f exampledb.yaml
+$ kubectl apply -f exampledb_aws.yaml
 ```
 
 You should see the following output:
@@ -134,21 +132,21 @@ $ kubectl get pods
 You should see output like this:
 
 ```console
-NAME                                                  READY  STATUS   RESTARTS  AGE
-example-90089e05-vitessbackupstorage-subcontroller    1/1    Running  0         59s
-example-etcd-faf13de3-1                               1/1    Running  0         59s
-example-etcd-faf13de3-2                               1/1    Running  0         59s
-example-etcd-faf13de3-3                               1/1    Running  0         59s
-example-uscentral1a-vtctld-6a268099-56c48bbc89-6r9dp  1/1    Running  2         58s
-example-uscentral1a-vtgate-bbffae2f-54d5fdd79-gmwlm   0/1    Running  2         54s
-example-uscentral1a-vtgate-bbffae2f-54d5fdd79-jldzg   0/1    Running  2         54s
-example-vttablet-uscentral1a-0261268656-d6078140      2/3    Running  2         58s
-example-vttablet-uscentral1a-1579720563-f892b0e6      2/3    Running  2         59s
-example-vttablet-uscentral1a-2253629440-17557ac0      2/3    Running  2         58s
-example-vttablet-uscentral1a-3067826231-d454720e      2/3    Running  2         59s
-example-vttablet-uscentral1a-3815197730-f3886a80      2/3    Running  2         58s
-example-vttablet-uscentral1a-3876690474-0ed30664      2/3    Running  2         59s
-vitess-operator-6f54958746-mr9hp                      1/1    Running  0         17m
+NAME                                                 READY   STATUS      RESTARTS   AGE
+example-90089e05-vitessbackupstorage-subcontroller   1/1     Running     0          44s
+example-etcd-faf13de3-1                              1/1     Running     0          44s
+example-etcd-faf13de3-2                              1/1     Running     0          44s
+example-etcd-faf13de3-3                              1/1     Running     0          43s
+example-main-80-x-vtbackup-init-f09214a2             0/1     Completed   0          42s
+example-main-x-80-vtbackup-init-6f097fa4             0/1     Completed   0          42s
+example-uswest2a-vtctld-e9a472d4-68f7844c65-6n48p    1/1     Running     2          44s
+example-uswest2a-vtgate-dc57c24e-66b7fd464-v67n8     0/1     Running     2          43s
+example-uswest2a-vtgate-dc57c24e-66b7fd464-x776t     0/1     Running     2          43s
+example-vttablet-uswest2a-0433486107-2adb076e        2/3     Running     1          44s
+example-vttablet-uswest2a-1016938354-18161672        2/3     Running     1          43s
+example-vttablet-uswest2a-1990736494-c589ebc7        2/3     Running     1          44s
+example-vttablet-uswest2a-3169804963-d4c380c8        2/3     Running     1          44s
+vitess-operator-5f64b6fb65-pnvjl                     1/1     Running     0          23m
 ```
 
 ## Step 5. Port-forward the `vtctld` service to your Kubernetes cluster.
@@ -167,12 +165,10 @@ $ vtctlclient -server localhost:15999 ListAllTablets
 You should see output like this:
 
 ```console
-uscentral1a-0261268656 main -80 replica 10.16.1.16:15000 10.16.1.16:3306 []
-uscentral1a-1579720563 main 80- replica 10.16.1.15:15000 10.16.1.15:3306 []
-uscentral1a-2253629440 main -80 replica 10.16.0.18:15000 10.16.0.18:3306 []
-uscentral1a-3067826231 main 80- replica 10.16.0.17:15000 10.16.0.17:3306 []
-uscentral1a-3815197730 main 80- master 10.16.2.20:15000 10.16.2.20:3306 []
-uscentral1a-3876690474 main -80 master 10.16.2.21:15000 10.16.2.21:3306 []
+uswest2a-0433486107 main -80 master 192.168.5.111:15000 192.168.5.111:3306 []
+uswest2a-1016938354 main -80 replica 192.168.0.234:15000 192.168.0.234:3306 []
+uswest2a-1990736494 main 80- replica 192.168.17.236:15000 192.168.17.236:3306 []
+uswest2a-3169804963 main 80- master 192.168.3.15:15000 192.168.3.15:3306 []
 ```
 
 ## Step 6. Apply the VSchema to your Vitess database.
@@ -199,7 +195,7 @@ Expose the service using the following command:
 $ kubectl expose deployment $( kubectl get deployment --selector="planetscale.com/component=vtgate" -o=jsonpath="{.items..metadata.name}" ) --type=LoadBalancer --name=test-vtgate --port 3306 --target-port 3306
 ```
 
-Use the following command to find the external IP for your LoadBalancer service:
+Use the following command to find the external ELB name for your LoadBalancer service:
 
 ```console
 $ kubectl get service test-vtgate
@@ -208,8 +204,8 @@ $ kubectl get service test-vtgate
 You should see output like the following:
 
 ```console
-NAME         TYPE          CLUSTER-IP      EXTERNAL-IP      PORT(S)         AGE
-test-vtgate  LoadBalancer  [cluster_ip]    [external_ip]    3306:32157/TCP  90s
+NAME          TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)          AGE
+test-vtgate   LoadBalancer   [cluster_ip]    [elb_dns_name]  3306:30481/TCP   59s
 ```
 
 It may take a few minutes for the load balancer to become available.
@@ -219,10 +215,10 @@ It may take a few minutes for the load balancer to become available.
 Use the IP from the previous step to connect to your Vitess database using a command like the following:
 
 ```console
-$ mysql -u user -h [external_ip] -p
+$ mysql -u user -h [elb_dns_name] -p
 ```
 
-After entering your password (the default is `password` from the `exampledb.yaml` file), you can now submit queries against your Vitess database from your MySQL client.
+After entering your password (the default is `password` from the `exampledb_aws.yaml` file), you can now submit queries against your Vitess database from your MySQL client.
 
 For example, the following query displays the tables in your database with VSchemas:
 
