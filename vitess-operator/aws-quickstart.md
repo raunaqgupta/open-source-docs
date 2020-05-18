@@ -24,9 +24,9 @@ This guide assumes you have the following components and services:
 
 To deploy a Vitess cluster on EKS using the Vitess Operator, follow these steps:
 
-1. Download the operator and example database configuration files.
-1. Apply the operator configuration file against your Kubernetes cluster.
-1. Edit the name of the Kubernetes secret in the database configuration file.
+1. Download the operator installation and example database configuration files.
+1. Apply the operator installation file against your Kubernetes cluster.
+1. Edit the name your S3 bucket and region in the database configuration file.
 1. Apply the database configuration file to your cluster.
 1. Port-forward the `vtctld` service to your Kubernetes cluster.
 1. Apply the VSchema to your Vitess database.
@@ -38,14 +38,14 @@ To deploy a Vitess cluster on EKS using the Vitess Operator, follow these steps:
 
 Download the following files:
 
-+ [Operator configuration file](https://storage.googleapis.com/vitess-operator/install/operator.yaml)
++ [Operator installation file](https://storage.googleapis.com/vitess-operator/install/operator.yaml)
 + [Database configuration file](https://storage.googleapis.com/vitess-operator/examples/exampledb_aws.yaml)
 + [Example VSchema](https://storage.googleapis.com/vitess-operator/examples/vschema.json)
 + [Example SQL schema](https://storage.googleapis.com/vitess-operator/examples/schema.sql)
 
 This guide will assume that the above files are in your working directory.
 
-## Step 2. Apply the operator configuration file against your Kubernetes cluster.
+## Step 2. Apply the operator installation file against your Kubernetes cluster.
 
 This step assumes that `kubectl` is configured to access the GKE cluster.
 
